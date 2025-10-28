@@ -110,11 +110,11 @@ void OnTimer()
 //+------------------------------------------------------------------+
 //| Parse comma-separated string parameter                           |
 //+------------------------------------------------------------------+
-void ParseStringParameter(string input, string &output[])
+void ParseStringParameter(string inputValue, string &output[])
 {
-    StringReplace(input, " ", "");  // Remove spaces
+    StringReplace(inputValue, " ", "");  // Remove spaces
     string parts[];
-    StringSplit(input, ',', parts);
+    StringSplit(inputValue, ',', parts);
 
     ArrayResize(output, ArraySize(parts));
     for(int i = 0; i < ArraySize(parts); i++)
@@ -187,7 +187,9 @@ void ExportHistoricalData(string symbol, ENUM_TIMEFRAMES tf, string tfStr, datet
     }
 
     // Create filename
-    string filename = ExportFolder + FilePrefix + "training_data_" + StringToLower(tfStr) + ".csv";
+    string lowerTfStr = tfStr;
+    StringToLower(lowerTfStr);
+    string filename = ExportFolder + FilePrefix + "training_data_" + lowerTfStr + ".csv";
 
     // Open file
     int handle = FileOpen(filename, FILE_WRITE | FILE_CSV | FILE_ANSI, ",");
@@ -238,10 +240,10 @@ void ExportCurrentMarketData(string symbol)
     int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
 
     // Get session info
-    datetime currentTime = TimeCurrent();
-    int hour = TimeHour(currentTime);
+    datetime currentTimeVar = TimeCurrent();
+    int hour = TimeHour(currentTimeVar);
     string session = GetSessionString(hour);
-    string dayOfWeek = TimeDayOfWeekToString(TimeDayOfWeek(currentTime));
+    string dayOfWeek = TimeDayOfWeekToString(TimeDayOfWeek(currentTimeVar));
 
     // Create JSON data
     string jsonFilename = ExportFolder + FilePrefix + "current_market.json";
@@ -249,7 +251,7 @@ void ExportCurrentMarketData(string symbol)
     if(handle != INVALID_HANDLE)
     {
         FileWrite(handle, "{");
-        FileWrite(handle, "  \"query_timestamp\": \"" + TimeToString(currentTime, TIME_DATE|TIME_SECONDS) + "\",");
+        FileWrite(handle, "  \"query_timestamp\": \"" + TimeToString(currentTimeVar, TIME_DATE|TIME_SECONDS) + "\",");
         FileWrite(handle, "  \"symbol\": \"" + symbol + "\",");
         FileWrite(handle, "  \"current_price\": " + DoubleToString(bid, digits) + ",");
         FileWrite(handle, "  \"ask\": " + DoubleToString(ask, digits) + ",");
@@ -314,7 +316,9 @@ void ExportTimeframeData(string symbol, ENUM_TIMEFRAMES tf, string tfStr)
     string trend = DetermineTrend(rates[copied-1].close, ema20[copied-1], ema50[copied-1], ema200[copied-1]);
 
     // Create enhanced CSV filename
-    string enhancedFilename = ExportFolder + FilePrefix + "enhanced_" + StringToLower(tfStr) + ".csv";
+    string lowerTfStr = tfStr;
+    StringToLower(lowerTfStr);
+    string enhancedFilename = ExportFolder + FilePrefix + "enhanced_" + lowerTfStr + ".csv";
 
     // Open enhanced file
     int handle = FileOpen(enhancedFilename, FILE_WRITE | FILE_CSV | FILE_ANSI, ",");
