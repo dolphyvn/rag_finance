@@ -1,0 +1,20 @@
+# Dependencies for Windows MT5 WebSocket Server
+
+# MT5 Integration
+MetaTrader5>=5.0.37
+
+# WebSocket Server
+websockets>=11.0.3
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Date and Time
+python-dateutil>=2.8.2
+
+# Logging and Configuration
+pyyaml>=6.0
+
+# For running as a service (optional)
+# python-decouple>=3.8

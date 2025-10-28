@@ -1,0 +1,48 @@
+# RAG Trading System Configuration
+
+# MT5 WebSocket Server Configuration
+mt5_server:
+  host: "0.0.0.0"
+  port: 8765
+  log_level: "INFO"
+
+# MT5 Client Configuration
+mt5_client:
+  host: "192.168.1.100"  # Update with your Windows machine IP
+  port: 8765
+  symbol: "XAUUSD"
+  timeout: 30
+
+# RAG System Configuration
+rag:
+  vector_db_path: "./trading_knowledge"
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  llm_model: "qwen3:8b"
+  similarity_threshold: 0.7
+  max_retrieved_docs: 5
+
+# Data Processing Configuration
+data:
+  historical_days: 180  # Days of historical data to fetch
+  min_profit_points: 5.0  # Minimum profit for successful trades
+  batch_size: 50  # Batch size for importing
+  timeframes: ["M5", "M15", "H1", "H4"]
+
+# Trading Configuration
+trading:
+  default_stop_loss_atr: 2.0  # Stop loss as ATR multiplier
+  default_take_profit_atr: [1.0, 2.0, 3.0]  # TP levels as ATR multipliers
+  max_risk_per_trade: 0.02  # 2% risk per trade
+  confidence_threshold: 0.6  # Minimum confidence for trade signals
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/rag_trading.log"
+
+# Performance Configuration
+performance:
+  enable_caching: true
+  cache_ttl: 3600  # Cache TTL in seconds
+  max_concurrent_requests: 10
