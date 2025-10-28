@@ -8,8 +8,6 @@
 #property version   "1.00"
 #property description "RAG Trading System - Data Exporter EA"
 
-#include <Trade\Trade.mqh>
-
 //--- Input parameters
 input group "Export Settings"
 input string   ExportFolder   = "C:\\RAG_Data\\";      // Export folder path
@@ -116,10 +114,10 @@ void ParseStringParameter(string input, string &output[])
 {
     StringReplace(input, " ", "");  // Remove spaces
     string parts[];
-    int count = StringSplit(input, ',', parts);
+    StringSplit(input, ',', parts);
 
-    ArrayResize(output, count);
-    for(int i = 0; i < count; i++)
+    ArrayResize(output, ArraySize(parts));
+    for(int i = 0; i < ArraySize(parts); i++)
     {
         output[i] = parts[i];
     }
@@ -189,7 +187,7 @@ void ExportHistoricalData(string symbol, ENUM_TIMEFRAMES tf, string tfStr, datet
     }
 
     // Create filename
-    string filename = ExportFolder + FilePrefix + "training_data_" + tfStr.ToLower() + ".csv";
+    string filename = ExportFolder + FilePrefix + "training_data_" + StringToLower(tfStr) + ".csv";
 
     // Open file
     int handle = FileOpen(filename, FILE_WRITE | FILE_CSV | FILE_ANSI, ",");
@@ -243,7 +241,7 @@ void ExportCurrentMarketData(string symbol)
     datetime currentTime = TimeCurrent();
     int hour = TimeHour(currentTime);
     string session = GetSessionString(hour);
-    string dayOfWeek = TimeToString(currentTime, TIME_DATE) + " " + TimeDayOfWeek(currentTime);
+    string dayOfWeek = TimeDayOfWeekToString(TimeDayOfWeek(currentTime));
 
     // Create JSON data
     string jsonFilename = ExportFolder + FilePrefix + "current_market.json";
@@ -259,7 +257,7 @@ void ExportCurrentMarketData(string symbol)
         FileWrite(handle, "  \"spread\": " + IntegerToString((int)((ask - bid) / point)) + ",");
         FileWrite(handle, "  \"volume\": " + IntegerToString(volume) + ",");
         FileWrite(handle, "  \"session\": \"" + session + "\",");
-        FileWrite(handle, "  \"day_of_week\": \"" + TimeDayOfWeekToString(TimeDayOfWeek(currentTime)) + "\",");
+        FileWrite(handle, "  \"day_of_week\": \"" + dayOfWeek + "\",");
         FileWrite(handle, "  \"hour\": " + IntegerToString(hour));
         FileWrite(handle, "}");
         FileClose(handle);
@@ -316,7 +314,7 @@ void ExportTimeframeData(string symbol, ENUM_TIMEFRAMES tf, string tfStr)
     string trend = DetermineTrend(rates[copied-1].close, ema20[copied-1], ema50[copied-1], ema200[copied-1]);
 
     // Create enhanced CSV filename
-    string enhancedFilename = ExportFolder + FilePrefix + "enhanced_" + tfStr.ToLower() + ".csv";
+    string enhancedFilename = ExportFolder + FilePrefix + "enhanced_" + StringToLower(tfStr) + ".csv";
 
     // Open enhanced file
     int handle = FileOpen(enhancedFilename, FILE_WRITE | FILE_CSV | FILE_ANSI, ",");
